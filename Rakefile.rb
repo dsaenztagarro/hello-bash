@@ -39,6 +39,7 @@ namespace :vagrant do
             end
           end
         end
+        `cp bin/proxy_command.sh build/`
         puts ''
       rescue StandardException => e
         puts 'ERROR! Verify you have created a config/proxies.yml file.'
