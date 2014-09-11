@@ -1,6 +1,7 @@
 require 'yaml'
 require 'erb'
 require 'colorize'
+
 # require 'ruby-progressbar'
 # Progressbar integration:
 # total = 0
@@ -13,17 +14,17 @@ namespace :vagrant do
   namespace :commands do
     desc 'Delete and regenerate build folder'
     task :reset do
-      puts "Resetting build folder".colorize(:green)
+      puts 'Resetting build folder'.colorize(:green)
       `rm -rf build`
       `mkdir build`
     end
 
-    desc 'Copy in build folder vagrant commands generated from config/proxies.yml'
+    desc 'Copy in build folder commands generated from config/proxies.yml'
     task :build do
       begin
-        puts "Building vagrant commands".colorize(:green)
-        template_path = "templates/vagrant_command.sh.erb"
-        cnf = YAML::load(File.open('config/proxies.yml'))
+        puts 'Building vagrant commands'.colorize(:green)
+        template_path = 'templates/vagrant_command.sh.erb'
+        cnf = YAML.load(File.open('config/proxies.yml'))
 
         publications = cnf['publication']
         publications.keys.each do |publication|
@@ -31,13 +32,15 @@ namespace :vagrant do
             folders.keys.each do |folder|
               file_name = folders[folder]
               content = ERB.new(File.read(template_path)).result(binding)
-              File.open("build/rb#{file_name}.sh", 'w+') { |f| f.write(content) }
-              print '.'
+              File.open("build/rb#{file_name}.sh", 'w+') do |file|
+                file.write(content)
+                print '.'
+              end
             end
           end
         end
         puts ''
-      rescue Exception => e
+      rescue StandardException => e
         puts 'ERROR! Verify you have created a config/proxies.yml file.'
         puts e
       end
@@ -48,11 +51,11 @@ namespace :vagrant do
       puts 'Symlinking vagrant commands'.colorize(:green)
       cwd = Dir.pwd
       Dir.foreach('./build/') do |file_name|
-        next if file_name == '.' or file_name == '..'
+        next if file_name == '.' || file_name == '..'
         command = file_name[/\w+/]
         file_path = "#{cwd}/build/#{file_name}"
-        system "chmod +x #{file_path}; " +
-              "ln -s -f '#{file_path}' /usr/local/bin/#{command}"
+        system "chmod +x #{file_path}; " \
+          "ln -s -f '#{file_path}' /usr/local/bin/#{command}"
         print '.'
       end
       puts ''
@@ -60,9 +63,9 @@ namespace :vagrant do
 
     desc 'Delete symlinks from user local bin folder'
     task :delete do
-      puts "Deleting vagrant commands".colorize(:green)
+      puts 'Deleting vagrant commands'.colorize(:green)
       Dir.foreach('./build/') do |file_name|
-        next if file_name == '.' or file_name == '..'
+        next if file_name == '.' || file_name == '..'
         command = file_name[/\w+/]
         system "rm /usr/local/bin/#{command}"
         print '.'
@@ -70,8 +73,8 @@ namespace :vagrant do
       puts ''
     end
 
-    task :create => [ 'delete', 'reset', 'build', 'symlink' ]
+    task create: %w(delete reset build symlink)
   end
 end
 
-task :default => ['vagrant:commands:create']
+task default: 'vagrant:commands:create'
