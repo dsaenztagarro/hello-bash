@@ -1,0 +1,9 @@
+publication:
+  'hello-usa':
+    backend: ub
+    backend_core: ubc
+    frontend: uf
+  'hello-canada':
+    backend: cb
+    backend_core: cbc
+    frontend: cf
