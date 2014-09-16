@@ -1,9 +1,25 @@
+# File format
+# publication:
+#   <publication_code1>:
+#     <module1>: <command-name1>
+#     <module2>: <command-name2>
+#     ...
+#   <publication_code2>:
+#     <module1>: <command-name1>
+#     <module2>: <command-name2>
+#     ...
+#
+# modules available:
+# - backend
+# - backend_core
+# - frontend
+
 publication:
   'hello-usa':
-    backend: ub
-    backend_core: ubc
-    frontend: uf
+    backend: usab
+    backend_core: usabc
+    frontend: usaf
   'hello-canada':
-    backend: cb
-    backend_core: cbc
-    frontend: cf
+    backend: canb
+    backend_core: canbc
+    frontend: canf
